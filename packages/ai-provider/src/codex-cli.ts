@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { homedir, tmpdir } from 'node:os'
-import { delimiter, join } from 'node:path'
+import { delimiter, dirname, join } from 'node:path'
 import type { AiChatResponse, AiProviderConfig } from './types'
 import type { StreamCallbacks } from './stream'
 
@@ -37,6 +37,25 @@ export function resolveCodexCliPath(): string {
     )
   }
   return path
+}
+
+/**
+ * Finder-launched macOS applications receive a minimal PATH. The Codex npm
+ * launcher uses `#!/usr/bin/env node`, so finding `codex` by its absolute path
+ * is not sufficient: its adjacent Node executable must also be discoverable.
+ */
+export function codexSpawnEnv(cliPath: string): NodeJS.ProcessEnv {
+  const path = [
+    dirname(cliPath),
+    ...(process.env.PATH ?? '').split(delimiter),
+    join(homedir(), '.local', 'bin'),
+    '/opt/homebrew/bin',
+    '/usr/local/bin',
+  ].filter(Boolean)
+  return {
+    ...process.env,
+    PATH: [...new Set(path)].join(delimiter),
+  }
 }
 
 function outputSchema(tools: AgentToolDef[]): Record<string, unknown> {
@@ -187,7 +206,11 @@ async function runCodexTurn(
     const cliPath = resolveCodexCliPath()
     const prompt = buildPrompt(system, messages, tools)
     await new Promise<void>((resolve, reject) => {
-      const child = spawn(cliPath, args, { cwd: workDir, stdio: ['pipe', 'ignore', 'pipe'] })
+      const child = spawn(cliPath, args, {
+        cwd: workDir,
+        env: codexSpawnEnv(cliPath),
+        stdio: ['pipe', 'ignore', 'pipe'],
+      })
       let stderr = ''
       const abort = () => child.kill('SIGTERM')
       signal?.addEventListener('abort', abort, { once: true })
