@@ -4,6 +4,12 @@
  */
 
 /** @type {import('electron-builder').Configuration} */
+const appleNotarization = process.env.APPLE_KEYCHAIN_PROFILE
+  ? { keychainProfile: process.env.APPLE_KEYCHAIN_PROFILE }
+  : process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID
+    ? true
+    : false
+
 const config = {
   appId: 'com.fractal.office',
   productName: 'Fractal Office',
@@ -73,12 +79,13 @@ const config = {
   npmRebuild: false,
   mac: {
     target: ['dmg', 'zip'],
+    artifactName: 'Fractal-Office-${version}-${arch}.${ext}',
     category: 'public.app-category.productivity',
     hardenedRuntime: true,
     gatekeeperAssess: false,
     entitlements: 'build/entitlements.mac.plist',
     entitlementsInherit: 'build/entitlements.mac.plist',
-    notarize: false,
+    notarize: appleNotarization,
     extraResources: [
       {
         from: '../sheets/native/xlsx-engine/target/release/xlsx-sidecar',
@@ -87,6 +94,7 @@ const config = {
     ],
   },
   win: {
+    artifactName: 'Fractal-Office-Setup-${version}-${arch}.${ext}',
     target: [
       {
         target: 'nsis',
@@ -95,7 +103,9 @@ const config = {
     ],
     extraResources: [
       {
-        from: '../sheets/native/xlsx-engine/target/x86_64-pc-windows-gnu/release/xlsx-sidecar.exe',
+        // The Windows runner builds Rust's native MSVC target into target/release.
+        // Keeping this path native also makes `npm run dist:win` work locally.
+        from: '../sheets/native/xlsx-engine/target/release/xlsx-sidecar.exe',
         to: 'native/xlsx-sidecar.exe',
       },
     ],

@@ -1,5 +1,10 @@
 # Fractal Office
 
+[![Download for macOS](https://img.shields.io/badge/Download-macOS-111111?style=for-the-badge&logo=apple)](https://github.com/fractalsociety/Fractaloffice/releases/latest)
+[![Download for Windows](https://img.shields.io/badge/Download-Windows-0078D4?style=for-the-badge&logo=windows11)](https://github.com/fractalsociety/Fractaloffice/releases/latest)
+
+Installers are published on the [latest GitHub release](https://github.com/fractalsociety/Fractaloffice/releases/latest). On macOS, download the `.dmg`; on Windows, download the `.exe` installer.
+
 An AI-native office suite for macOS and Windows: word processor, spreadsheet,
 presentations, and PDF. Its AI editing tools run through the locally installed,
 locally authenticated OpenAI Codex CLI.
@@ -195,7 +200,7 @@ npm run fixtures     # generate test .docx fixtures
 npm test             # engine and app unit tests
 npm run typecheck    # TypeScript checks across every workspace
 npm run build:all    # production renderer and main-process builds
-npm run dist:mac     # unsigned local macOS DMG and zip
+npm run dist:mac     # signed when a Developer ID identity is available; notarized when Apple credentials are configured
 npm run dist:win     # Windows NSIS installer
 ```
 
