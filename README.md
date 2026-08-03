@@ -50,56 +50,172 @@ All pure TypeScript, no Electron dependency, unit-tested (except the UI kit):
   `packages/electron-utils` — shared i18n core, React UI kit, recent-files
   store, and Electron main-process helpers.
 
-## Requirements and setup
+## Installation and AI setup
 
-1. Install Node.js 20 or newer and npm 10 or newer.
-2. Install the OpenAI Codex CLI and authenticate it:
+Fractal Office supports two primary AI modes:
 
-   ```bash
-   npm install -g @openai/codex
-   codex login
-   codex --version
-   ```
+- **Local Codex CLI** — recommended. It reuses a Codex login already stored on
+  the computer; Fractal Office never asks for or copies the credential.
+- **Hermes / Local Models** — connects directly to an OpenAI-compatible server
+  running on your computer or private network.
 
-3. Install the app dependencies and verify the source:
+### Prerequisites
+
+Install these before cloning the repository:
+
+- [Git](https://git-scm.com/downloads)
+- Node.js 20 or newer and npm 10 or newer
+- Rust stable with `cargo` on `PATH` if building Fractal Office Sheets
+- macOS or Windows; Linux development may work but is not currently packaged
+
+Confirm the main tools are available:
 
 ```bash
+git --version
+node --version
+npm --version
+```
+
+For Sheets, also run:
+
+```bash
+rustc --version
+cargo --version
+```
+
+### 1. Download and install Fractal Office
+
+```bash
+git clone https://github.com/fractalsociety/Fractaloffice.git
+cd Fractaloffice
 npm ci
+```
+
+Use `npm ci`, not `npm install`, for a reproducible install from the committed
+lockfile. No `.env` file is required for Codex or a local Hermes endpoint.
+
+### 2A. Configure the local Codex CLI (recommended)
+
+Install Codex globally, authenticate in the terminal, and verify the session:
+
+```bash
+npm install --global @openai/codex
+codex login
+codex login status
+codex --version
+```
+
+`codex login` opens the official browser sign-in flow. Codex supports signing
+in with ChatGPT or using an OpenAI API key. If a machine cannot open the browser,
+use device authentication:
+
+```bash
+codex login --device-auth
+```
+
+To use API-key billing instead, place the key in an environment variable and
+pipe it to Codex. Do not paste a key into this repository or commit it:
+
+```bash
+printenv OPENAI_API_KEY | codex login --with-api-key
+```
+
+Start Fractal Office, open the account menu on the Home screen, select
+**AI model**, choose **Local Codex CLI**, and save. The app launches
+`codex exec` for AI turns and defaults to `gpt-5.6-sol`.
+
+The packaged app searches `PATH`, `~/.local/bin/codex`,
+`/opt/homebrew/bin/codex`, and `/usr/local/bin/codex`. If it cannot find the
+executable, set an explicit path before starting the app:
+
+```bash
+export CODEX_CLI_PATH="$(command -v codex)"  # macOS, Linux, or Git Bash
+```
+
+```powershell
+$env:CODEX_CLI_PATH = (Get-Command codex).Source # Windows PowerShell
+```
+
+Restart Fractal Office after installing Codex, changing authentication, or
+changing `CODEX_CLI_PATH`.
+
+### 2B. Configure Hermes or another local model
+
+This mode does not run the Codex CLI. Start an OpenAI-compatible model server,
+load a model, and leave the server running while using Fractal Office. The
+server must implement `/v1/chat/completions`; reliable document editing also
+requires streaming responses and function/tool calling.
+
+Supported endpoint presets are:
+
+| Server       | Default endpoint            |
+| ------------ | --------------------------- |
+| Ollama       | `http://127.0.0.1:11434/v1` |
+| LM Studio    | `http://127.0.0.1:1234/v1`  |
+| llama.cpp    | `http://127.0.0.1:8080/v1`  |
+| Hermes Proxy | `http://127.0.0.1:8645/v1`  |
+
+Verify that the server is reachable and copy the exact model ID it returns:
+
+```bash
+curl http://127.0.0.1:11434/v1/models
+```
+
+Then configure the app:
+
+1. Open Fractal Office and go to the Home screen.
+2. Open the account menu and choose **AI model**.
+3. Select **Hermes / Local Models**.
+4. Choose a preset or enter the full endpoint URL.
+5. Enter the exact model ID exposed by `/v1/models`.
+6. Leave **API key** blank for an unsecured local endpoint. If your server
+   requires a key, enter that server's key locally in the settings dialog.
+7. Select **Save**, open an editor, and send a simple AI request.
+
+The provider selection is shared by Docs, Sheets, Slides, and PDF. A model
+named Hermes is not required—the option supports any compatible local model.
+Model quality and tool-calling support determine how reliably it can edit
+documents.
+
+Do not expose an unauthenticated local-model endpoint to the public internet.
+For another computer on a trusted network, replace `127.0.0.1` with the private
+server address and configure authentication and firewall rules on that server.
+
+### 3. Run the application
+
+```bash
+npm run dev          # all four editors and the desktop shell
+npm run dev:docs     # Docs only
+```
+
+For a complete verification or production build:
+
+```bash
 npm run fixtures     # generate test .docx fixtures
-npm test             # engine + app unit tests (docs/sheets/slides need no display)
-npm run typecheck    # tsc --noEmit across every workspace
-npm run dev          # all four editors + shell against Vite dev servers
-npm run dev:docs     # a single app (same pattern works per workspace)
-npm run build:all    # production renderer/main-process builds
-npm run dist:mac     # unsigned local macOS DMG + zip
+npm test             # engine and app unit tests
+npm run typecheck    # TypeScript checks across every workspace
+npm run build:all    # production renderer and main-process builds
+npm run dist:mac     # unsigned local macOS DMG and zip
 npm run dist:win     # Windows NSIS installer
 ```
 
-The packaged app searches `PATH`, `~/.local/bin/codex`,
-`/opt/homebrew/bin/codex`, and `/usr/local/bin/codex`. Set
-`CODEX_CLI_PATH=/absolute/path/to/codex` before launching the app when Codex is
-installed somewhere else. The default model is `gpt-5.6-sol`.
-
-### Hermes and local models
-
-Fractal Office can also use Hermes-family or other local models through an
-OpenAI-compatible HTTP endpoint. On the Home screen, open the account menu,
-choose **AI model**, then select **Hermes / Local Models**. Enter the exact model
-name exposed by the server and choose or edit its endpoint:
-
-- Ollama: `http://127.0.0.1:11434/v1`
-- LM Studio: `http://127.0.0.1:1234/v1`
-- llama.cpp: `http://127.0.0.1:8080/v1`
-- Hermes Proxy: `http://127.0.0.1:8645/v1`
-
-Local endpoints do not require an API key unless the server was configured to
-require one. The setting is shared by Docs, Sheets, Slides, and PDF. For reliable
-document editing, use a local model and server that support OpenAI-compatible
-streaming chat completions and function/tool calling.
-
-The sheets app additionally needs a Rust toolchain for its xlsx sidecar
-(`cargo` on PATH); `npm run build -w @fractal-office/sheets` compiles it
+`npm run build -w @fractal-office/sheets` compiles the Rust xlsx sidecar
 automatically.
+
+### Troubleshooting AI setup
+
+| Problem                                                        | What to check                                                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Codex CLI was not found**                                    | Run `codex --version`, set `CODEX_CLI_PATH`, and restart Fractal Office.                                       |
+| **Codex is not signed in**                                     | Run `codex login status`; if needed, run `codex login` again.                                                  |
+| **Local model connection refused**                             | Start the model server and verify its `/v1/models` endpoint with `curl`.                                       |
+| **Model not found**                                            | Use the exact ID returned by `/v1/models`, including tags or quantization suffixes.                            |
+| **Text works but document edits fail**                         | Use a model/server combination with OpenAI-compatible tool calling and streaming enabled.                      |
+| **Requests are unexpectedly slow**                             | Check local RAM/VRAM use, reduce model size or context, and confirm the server is using hardware acceleration. |
+| **Settings changed but an editor still uses the old provider** | Close and reopen the editor tab or restart Fractal Office.                                                     |
+
+For Codex-specific diagnostics, run `codex doctor`. Never attach Codex auth
+files, API keys, or local model credentials to a public issue.
 
 Local UI/e2e driver scripts (Playwright + Electron, for local acceptance, not
 committed by default) live in [`scripts/drivers/`](scripts/drivers/README.md).
