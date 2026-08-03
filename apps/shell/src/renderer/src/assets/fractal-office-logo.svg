@@ -1,0 +1,20 @@
+<svg width="1091" height="240" viewBox="0 0 1091 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="icon" x1="24" y1="18" x2="214" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="0.55" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="60" y1="44" x2="170" y2="198" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#E0F2FE" stop-opacity="0.88"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="58" fill="url(#icon)"/>
+  <path d="M66 48H174V78H99V112H160V142H99V194H66V48Z" fill="url(#shine)"/>
+  <circle cx="185" cy="54" r="13" fill="white" fill-opacity="0.9"/>
+  <circle cx="177" cy="116" r="8" fill="white" fill-opacity="0.75"/>
+  <circle cx="177" cy="174" r="6" fill="white" fill-opacity="0.55"/>
+  <text x="294" y="126" fill="#0F172A" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="800" letter-spacing="-3">FRACTAL</text>
+  <text x="296" y="190" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="650" letter-spacing="8">OFFICE</text>
+</svg>

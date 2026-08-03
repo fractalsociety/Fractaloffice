@@ -1,0 +1,51 @@
+{
+  "name": "fractal-office",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local AI office suite powered by the authenticated Codex CLI",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fractalsociety/Fractaloffice.git"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "format": "node tools/format-changed.mjs --write",
+    "format:check": "node tools/format-changed.mjs --check",
+    "lint": "eslint .",
+    "fixtures": "npm run fixtures -w @fractal-office/docx-engine",
+    "test": "npm run test -w @fractal-office/i18n && npm run test -w @fractal-office/electron-utils && npm run test -w @fractal-office/docx-engine && npm run test -w @fractal-office/file-parse && npm run test -w @fractal-office/pptx-engine && npm run test -w @fractal-office/pptx-render && npm run test -w @fractal-office/ai-search && npm run test -w @fractal-office/agent-core && npm run test -w @fractal-office/ai-provider && npm run test -w @fractal-office/project-store && npm run test -w @fractal-office/docs && npm run test -w @fractal-office/sheets && npm run test -w @fractal-office/shell && npm run test -w @fractal-office/slides && npm run test -w @fractal-office/pdf",
+    "typecheck": "npm run typecheck -w @fractal-office/i18n && npm run typecheck -w @fractal-office/electron-utils && npm run typecheck -w @fractal-office/docx-engine && npm run typecheck -w @fractal-office/file-parse && npm run typecheck -w @fractal-office/pptx-engine && npm run typecheck -w @fractal-office/pptx-render && npm run typecheck -w @fractal-office/ai-search && npm run typecheck -w @fractal-office/agent-core && npm run typecheck -w @fractal-office/ai-provider && npm run typecheck -w @fractal-office/project-store && npm run typecheck -w @fractal-office/ui && npm run typecheck -w @fractal-office/docs && npm run typecheck -w @fractal-office/sheets && npm run typecheck -w @fractal-office/shell && npm run typecheck -w @fractal-office/slides && npm run typecheck -w @fractal-office/pdf",
+    "dev": "concurrently -k -n docs,sheets,slides,pdf,shell -c blue,green,yellow,red,magenta \"npm run dev:renderer -w @fractal-office/docs\" \"npm run dev:renderer -w @fractal-office/sheets\" \"npm run dev:renderer -w @fractal-office/slides\" \"npm run dev:renderer -w @fractal-office/pdf\" \"DOCS_RENDERER_URL=http://localhost:5173 SHEETS_RENDERER_URL=http://localhost:5174 SLIDES_RENDERER_URL=http://localhost:5175 PDF_RENDERER_URL=http://localhost:5176 npm run dev -w @fractal-office/shell\"",
+    "dev:docs": "npm run dev -w @fractal-office/docs",
+    "build": "npm run build -w @fractal-office/docs",
+    "build:all": "npm run build -w @fractal-office/docs && npm run build -w @fractal-office/sheets && npm run build -w @fractal-office/slides && npm run build -w @fractal-office/pdf && npm run build -w @fractal-office/shell",
+    "shell": "npm run build:all && electron apps/shell",
+    "notices": "node tools/gen-third-party-notices.mjs",
+    "licenses": "node tools/check-licenses.mjs",
+    "dist:mac": "npm run notices && npm run build:all && npm run dist:mac -w @fractal-office/shell",
+    "dist:win": "npm run notices && npm run build:all && npm run dist:win -w @fractal-office/shell"
+  },
+  "dependencies": {
+    "ws": "^8.21.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^9.2.4",
+    "eslint": "^10.8.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.8.0",
+    "pixelmatch": "^7.2.0",
+    "playwright-core": "^1.61.1",
+    "pngjs": "^7.0.0",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "^8.65.0"
+  }
+}
