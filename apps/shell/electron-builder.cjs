@@ -78,7 +78,7 @@ const config = {
   npmRebuild: false,
   mac: {
     target: ['dmg', 'zip'],
-    artifactName: 'Fractal-Office-${version}-${arch}.${ext}',
+    artifactName: 'Fractal-Office-macOS-${arch}.${ext}',
     category: 'public.app-category.productivity',
     hardenedRuntime: true,
     gatekeeperAssess: false,
@@ -93,7 +93,7 @@ const config = {
     ],
   },
   win: {
-    artifactName: 'Fractal-Office-Setup-${version}-${arch}.${ext}',
+    artifactName: 'Fractal-Office-Windows-${arch}.${ext}',
     target: [
       {
         target: 'nsis',

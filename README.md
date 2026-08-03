@@ -1,9 +1,11 @@
 # Fractal Office
 
-[![Download for macOS](https://img.shields.io/badge/Download-macOS-111111?style=for-the-badge&logo=apple)](https://github.com/fractalsociety/Fractaloffice/releases/latest)
-[![Download for Windows](https://img.shields.io/badge/Download-Windows-0078D4?style=for-the-badge&logo=windows11)](https://github.com/fractalsociety/Fractaloffice/releases/latest)
+## Download
 
-Installers are published on the [latest GitHub release](https://github.com/fractalsociety/Fractaloffice/releases/latest). On macOS, download the `.dmg`; on Windows, download the `.exe` installer.
+[![Download for macOS](https://img.shields.io/badge/Download_for_macOS-Apple_Silicon-111111?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/fractalsociety/Fractaloffice/releases/latest/download/Fractal-Office-macOS-arm64.dmg)
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-64--bit-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/fractalsociety/Fractaloffice/releases/latest/download/Fractal-Office-Windows-x64.exe)
+
+The macOS download is signed and notarized by Apple. All installers and checksums are also available on the [latest GitHub release](https://github.com/fractalsociety/Fractaloffice/releases/latest).
 
 An AI-native office suite for macOS and Windows: word processor, spreadsheet,
 presentations, and PDF. Its AI editing tools run through the locally installed,
