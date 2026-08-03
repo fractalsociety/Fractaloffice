@@ -4,11 +4,10 @@
  */
 
 /** @type {import('electron-builder').Configuration} */
-const appleNotarization = process.env.APPLE_KEYCHAIN_PROFILE
-  ? { keychainProfile: process.env.APPLE_KEYCHAIN_PROFILE }
-  : process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID
-    ? true
-    : false
+const appleNotarization = Boolean(
+  process.env.APPLE_KEYCHAIN_PROFILE ||
+  (process.env.APPLE_ID && process.env.APPLE_APP_SPECIFIC_PASSWORD && process.env.APPLE_TEAM_ID),
+)
 
 const config = {
   appId: 'com.fractal.office',
@@ -115,7 +114,7 @@ const config = {
     allowToChangeInstallationDirectory: true,
   },
   dmg: {
-    sign: false,
+    sign: true,
   },
   afterAllArtifactBuild: 'build/notarize-dmg.js',
 }
